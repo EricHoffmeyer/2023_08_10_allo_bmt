@@ -1,0 +1,101 @@
+---
+title: "Graphing Allosensitized mice BMT data"
+#output: html_notebook
+---
+
+This notebook will visualize the allosensitized mice BMT data. I wanted more customization than is easily available in excel
+
+
+# Libraries
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+# Read in data
+
+Read in the data. While numbers are used for start and end dates of treatment as well as group, there are only a few values and I will treat them as factors. The only continuous values are survival, percents, and mfi values.
+
+```{r}
+data_raw <- read.csv("allo_bmt_data.csv", header = T, stringsAsFactors = T)
+
+data_raw
+```
+Now I will start to change the dataset from the initial read in, so I will create a new 'data' object.
+
+```{r}
+data <- data_raw |>
+  mutate(group = as.factor(group))
+
+data
+```
+
+```{r}
+p <- ggplot(data, aes(mfi_10, perc_10)) +
+  geom_point(aes(color = engrafted, shape = bmt_rux_end, size = 0.05)) +
+  geom_smooth() +
+  labs(x = "MFI, 1:10 dilution",
+       y = "% positive, 1:10 dilution",
+       title = "Transplant Outcomes of Allosensitized Mice",
+       subtitle = "Anti-IgG levels pre-transplant ") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  guides(size = FALSE) 
+
+p
+```
+
+
+Make the same plots for 1:40 dilution and 1:160 dilutions
+
+```{r}
+q <- ggplot(data, aes(mfi_40, perc_40)) +
+  geom_point(aes(color = engrafted, shape = bmt_rux_end, size = 0.05)) +
+  geom_smooth() +
+  labs(x = "MFI, 1:40 dilution",
+       y = "% positive, 1:40 dilution",
+       title = "Transplant Outcomes of Allosensitized Mice",
+       subtitle = "Anti-IgG levels pre-transplant ") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  guides(size = FALSE) 
+
+r <- ggplot(data, aes(mfi_160, perc_160)) +
+  geom_point(aes(color = engrafted, shape = bmt_rux_end, size = 0.05)) +
+  geom_smooth() +
+  labs(x = "MFI, 1:160 dilution",
+       y = "% positive, 1:160 dilution",
+       title = "Transplant Outcomes of Allosensitized Mice",
+       subtitle = "Anti-IgG levels pre-transplant ") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  guides(size = FALSE) 
+
+q
+r
+```
+
+
+
+Save plots
+
+```{r}
+ggsave("transplant_outcomes_1_10.png",
+       plot = p,
+       width = 8,
+       height = 6,
+       units = "in")
+
+ggsave("transplant_outcomes_1_40.png",
+       plot = q,
+       width = 8,
+       height = 6,
+       units = "in")
+
+ggsave("transplant_outcomes_1_160.png",
+       plot = r,
+       width = 8,
+       height = 6,
+       units = "in")
+```
+
